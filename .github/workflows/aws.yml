@@ -30,6 +30,8 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             sudo su
+            mkdir sir_riches
+            touch empty.txt
             cd vipcustomer.api
             git pull origin main
             docker-compose build
