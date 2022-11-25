@@ -31,7 +31,7 @@ jobs:
           script: |
             cd vipcustomer.api
             #git pull origin main
-            docker-compose build
+            #docker-compose build
             docker-compose up
             
             
