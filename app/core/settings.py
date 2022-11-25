@@ -3,6 +3,7 @@ from sys import modules
 
 from pydantic import BaseSettings
 
+
 BASE_DIR = Path(__file__).parent.resolve()
 
 
@@ -36,8 +37,8 @@ class Settings(BaseSettings):
 
         :return: Database URL.
         """
-
         return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_BASE}"
+        # return "sqlite+asyncpg:///data.db"
 
     class Config:
         env_file = f"{BASE_DIR}/.env"

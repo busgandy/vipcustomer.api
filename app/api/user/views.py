@@ -1,48 +1,72 @@
-
-from fastapi import APIRouter, Depends
-from typing import Any, List 
-from sqlalchemy import Session 
-from sqlmodel.ext.asyncio.session import AsyncSession
-from app.db.models import User
-import fastapi_users
-
-router = APIRouter()
-
-current_user = fastapi_users.current_user()
-
-@router.get("/my_details/")
-def get_current_user(current_user: User = Depends(current_user)):
-    return current_user
-
-
-from uuid import UUID
-from fastapi import APIRouter
-from .schemas import APIKey, Signup, SignupResponse, Login, LoginResponse
+from fastapi import APIRouter, Depends, HTTPException, status, Request
+import jwt
+from db.db import db_session
+from api.user.schemas import Signup, Login, APIKey
+from sqlalchemy.ext.asyncio import AsyncSession
+from db.models.user import User
+from api.user.authentication import config_credentials, authorized_exception
+from fastapi.security import OAuth2PasswordBearer
+from api.user.services import UserService
 
 router = APIRouter()
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
 
 
-@router.post("/signup", response_model=SignupResponse)
-async def create_user(signup: Signup):
-    return signup
+@router.post('/signup')
+async def create_user(user:Signup,session: AsyncSession = Depends(db_session)):
+    user_service = UserService(session=session)
+    new_user = await user_service.create_user(user)
+    new_user = User(**user.dict())
+    return new_user
+
+@router.post('/login')
+async def login(form_data: Login, session: AsyncSession = Depends(db_session)):
+    user_service = UserService(session=session)
+    res = await user_service.token_generator(form_data.email, form_data.password)
+    user, token = res['user'], res['access_token']
+    try:
+        payload = jwt.decode(token, config_credentials['SECRET_KEY'], config_credentials['ALGORITHM'])
+        return  {
+            'user': {
+                'id' : user.id,
+                'email' : user.email,
+                'first_name' : user.first_name,
+                'last_name' : user.last_name
+            },
+            'access_token' : token,'token_type' : 'bearer'
+        }
+    except:
+        raise authorized_exception
+
+@router.post("/get_api_key")
+async def get_user_api_key(form_data : Login, session: AsyncSession = Depends(db_session)):
+    user_service = UserService(session=session)
+    key = await user_service.get_api_key(form_data.email, form_data.password)
+    return key
+
+@router.post('/verify/')
+async def verify_api_key(key: APIKey, session: AsyncSession = Depends(db_session)):
+    user_service = UserService(session=session)
+    key = await user_service.verify_api_key(key)
+    return key
+
+# async def get_current_user(token : str = Depends(oauth2_scheme)):
+#     try:
+#         payload = jwt.decode(token, config_credentials['SECRET_KEY'], config_credentials['ALGORITHM'])
+#         user = await User.get(id=payload.get('id'))
+#     except:
+#         raise HTTPException(
+#             status_code=status.HTTP_401_UNAUTHORIZED,
+#             detail = 'Invalid Username or Password',
+#             headers={"WWW-Authenticate":'Bearer'}
+#         )
+#     return await user
 
 
-@router.post("/login", response_model=LoginResponse)
-async def login(login: Login):
-    return login
 
 
-@router.get("/key")
-async def get_user_api_key():
-    # Check Database if User id exist
-    # Depends on session user id
+# @router.get("/my_details/")
+# def get_current_user(current_user: User):
+#     return current_user
 
-    # If user exist get user APIkey
-    userAPIKey = APIKey(
-        key="3fa85f64-5740-2262-b3fc-2c963f36afa1",
-        user="3fa85f64-5740-2262-b3fc-2c963f36afa1",
-    )
-
-    # Send key string
-    return userAPIKey
 

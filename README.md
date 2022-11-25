@@ -51,6 +51,12 @@ docker-compose exec web pytest .
 
 ## Without docker
 
+### Setup DB
+
+```bash
+docker run -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=db -p 5432:5432 -d postgres:latest
+```
+
 #### Install
 
 ```bash
@@ -59,6 +65,13 @@ pip install -r requirements/development.txt
 ```
 
 Setup env variables in `app/core/.env`.
+
+### Apply migrations
+
+```
+cd app
+alembic upgrade head
+```
 
 #### Run
 

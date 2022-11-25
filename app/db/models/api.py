@@ -1,10 +1,11 @@
 import random
 import string
-
 from sqlalchemy import UniqueConstraint
 from sqlmodel import Field
+import uuid as uuid_pkg
 
-from common import UUIDModel, TimestampModel
+
+from .common import UUIDModel, TimestampModel
 
 
 def get_random_string(length):
@@ -25,7 +26,7 @@ class ApiKey(UUIDModel, TimestampModel, table=True):
     __table_args__ = (UniqueConstraint("api_key"),)
 
     api_key: str = Field(default=get_random_string(30))
-    user_id: str = Field(foreign_key="user.id")
+    user_id: uuid_pkg.UUID = Field(foreign_key="users.id")
 
     def __repr__(self):
         return f"api_key: {self.key}"

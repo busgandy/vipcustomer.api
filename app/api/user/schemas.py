@@ -1,4 +1,3 @@
-
 from datetime import datetime
 from typing import Optional
 from uuid import UUID
@@ -7,26 +6,23 @@ from pydantic import BaseModel
 
 
 class UserSchema(BaseModel):
-    id: Optional[UUID] = None
+    id: UUID
     first_name: str
     last_name: str
     email: str
+    password: str
 
     class Config:
         orm_mode = True
 
-from uuid import UUID
-from pydantic import BaseModel
-
 
 class APIKey(BaseModel):
-    key: UUID
-    user: UUID
+    key: str
 
 
 class Signup(BaseModel):
     first_name: str
-    last_name: int
+    last_name: str
     email: str
     password: str
 
@@ -46,3 +42,11 @@ class LoginResponse(BaseModel):
     last_name: int
     email: str
 
+
+class PeopleCreateSchema(BaseModel):
+    name: str
+    age: int
+    gender: str
+    occupation: str
+    vip_score: int
+    is_vip: bool

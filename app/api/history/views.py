@@ -5,7 +5,6 @@ from api.search.schemas import SearchResponseSchema
 
 router = APIRouter()
 
-# TODO : Add Page to Response Model Schema
 @router.get("/", response_model=Page[SearchResponseSchema])
 async def get_past_requests():
     res = []

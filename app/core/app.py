@@ -1,7 +1,10 @@
 from api.router import api_router
 from fastapi import FastAPI
 from fastapi.responses import UJSONResponse
-from fastapi_pagination import add_pagination
+from fastapi.middleware.cors import CORSMiddleware
+
+origins = ["*"]
+
 
 def get_app() -> FastAPI:
     """
@@ -21,6 +24,12 @@ def get_app() -> FastAPI:
         default_response_class=UJSONResponse,
     )
 
-    app.include_router(router=api_router, prefix="/api")
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=origins,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
-    return add_pagination(app)
+    app.include_router(router=api_router, prefix="/api")
+    return app
