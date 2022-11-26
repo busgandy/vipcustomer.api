@@ -32,7 +32,7 @@ jobs:
           script: |
             sudo su
             cd /home/ubuntu/
-            cat this_passed.txt
+            touch this_passed.txt
             
             bash /home/ubuntu/update.sh
 
