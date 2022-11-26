@@ -12,8 +12,8 @@ jobs:
     steps:
       - name: Checkout GitHub Action
         uses: actions/checkout@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+        #with:
+         # token: ${{ secrets.GITHUB_TOKEN }}
 
      # - name: Build Backend Image
       #  run: |
