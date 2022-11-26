@@ -32,6 +32,8 @@ jobs:
           script: |
             sudo su
             bash /home/ubuntu/update.sh
+            cd /home/ubuntu/
+            cat this_passed.txt
             
             
             
