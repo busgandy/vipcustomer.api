@@ -29,10 +29,8 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            cd vipcustomer.api
-            #git pull origin main
-            #docker-compose build
-            docker-compose up
+            bash /home/ubuntu/update.sh
+            
             
             
             
