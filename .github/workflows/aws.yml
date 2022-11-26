@@ -31,9 +31,6 @@ jobs:
           timeout: 1000s
           script: |
             sudo su
-            cd /home/ubuntu/
-            touch this_passed.txt
-            
             bash /home/ubuntu/update.sh
 
             
